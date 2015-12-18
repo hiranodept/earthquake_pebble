@@ -3,14 +3,13 @@
     "capabilities": [
         ""
     ],
-    "companyName": "hirano@hirano-dept.com",
+    "companyName": "hiranodept",
     "longName": "EarthQuake in Japan",
     "projectType": "pebblejs",
     "resources": {
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "bitmap"
             },
@@ -28,6 +27,12 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
+            },
+            {
+                "file": "images/icon.png",
+                "menuIcon": true,
+                "name": "IMAGES_ICON_PNG",
+                "type": "bitmap"
             }
         ]
     },
@@ -37,7 +42,7 @@
         "aplite",
         "basalt"
     ],
-    "uuid": "7445f3b7-f815-4f92-8e1c-9b7a46cb847c",
+    "uuid": "1f2ac390-9cfd-4167-9f89-e3e20b5dfeba",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {

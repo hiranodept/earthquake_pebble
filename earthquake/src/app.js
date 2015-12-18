@@ -5,11 +5,10 @@
  */
 
 var UI = require('ui');
-var Vector2 = require('vector2');
 var ajax = require('ajax');
 var todayData = [];
 var main = new UI.Card({
-  title: 'EarthQuake',
+  title: '地震情報',
   subtitle: today(),
   body: 'Fetching...',
 });
@@ -33,11 +32,11 @@ ajax(
   },
   function(data) {
     // Success!
-    var menuItems = parseFeed(data, 5);
+    var menuItems = parseFeed(data);
     // Construct Menu to show to user
     var resultsMenu = new UI.Menu({
       sections: [{
-        title: 'Today EarthQuake',
+        title: '地震情報',
         items: menuItems
       }]
     });
@@ -53,17 +52,17 @@ ajax(
 });
 
 
-var parseFeed = function(data, quantity) {
+var parseFeed = function(data) {
   var items = [];
-  for(var i = 0; i < quantity; i++) {
+  for(var i = 0; i < data.length; i++) {
     var time = data[i].earthquake.time;
     var magnitude = data[i].earthquake.hypocenter.magnitude;
     var scale = data[i].earthquake.maxScale;
     var place = data[i].earthquake.hypocenter.name;
 
     items.push({
-      title:place+':震度'+convert(scale),
-      subtitle:time
+      title:time,
+      subtitle:'震度'+convert(scale)+':'+place
     });
     
     todayData.push({
