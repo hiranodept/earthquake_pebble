@@ -6,6 +6,8 @@
 
 var UI = require('ui');
 var ajax = require('ajax');
+var Vector2 = require('vector2');
+
 var todayData = [];
 var main = new UI.Card({
   title: '地震情報',
@@ -59,7 +61,8 @@ var parseFeed = function(data) {
     var magnitude = data[i].earthquake.hypocenter.magnitude;
     var scale = data[i].earthquake.maxScale;
     var place = data[i].earthquake.hypocenter.name;
-
+    var depth = data[i].earthquake.hypocenter.depth;
+    var wave = data[i].earthquake.domesticTsunami;
     items.push({
       title:time,
       subtitle:'震度'+convert(scale)+':'+place
@@ -70,6 +73,8 @@ var parseFeed = function(data) {
       'magnitude':magnitude,
       'scale':scale,
       'place':place,
+      'depth':depth,
+      'tsunami':tsunami(wave)
     });
   }
   
@@ -102,46 +107,43 @@ function convert(scale){
   }
 }
 
+function tsunami(wave){
+  switch (wave) {
+    case 'None':
+      return 'なし';
+    case 'Unknown':
+      return '不明';
+    case 'Checking':
+      return '調査中';
+    case 'NonEffective':
+      return '若干の海面変動[被害の心配なし]';
+    case 'Watch':
+      return '津波注意報';
+    case 'Warning':
+      return '津波予報[種類不明]';
+  }
+  return '';
+}
 
-// main.on('click', 'up', function(e) {
-//   var menu = new UI.Menu({
-//     sections: [{
-//       items: [{
-//         title: 'Pebble.js',
-//         icon: 'images/menu_icon.png',
-//         subtitle: 'Can do Menus'
-//       }, {
-//         title: 'Second Item',
-//         subtitle: 'Subtitle Text'
-//       }]
-//     }]
-//   });
-//   menu.on('select', function(e) {
-//     console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-//     console.log('The item is titled "' + e.item.title + '"');
-//   });
-//   menu.show();
-// });
+main.on('click', 'select', function(e) {
+  var wind = new UI.Window({
+    fullscreen: true,
+  });
+  
+  var data = todayData[select];
+  var description = '発生時刻:'+data.time+'\n場所:'+data.place+'\nM'+data.magnitude+'\n震度:'+data.scale+'\n深さ:'+data.depth+'\n津波:'+data.tsunami;
+  
+  var text = new UI.Text({
+  position: new Vector2(0, 0),
+  size: new Vector2(144, 168),
+  text:description,
+  font:'GOTHIC_14',
+  color:'black',
+  textOverflow:'wrap',
+  textAlign:'left',
+	backgroundColor:'white'
+});
+  wind.add(text);
+  wind.show();
+});
 
-// main.on('click', 'select', function(e) {
-//   var wind = new UI.Window({
-//     fullscreen: true,
-//   });
-//   var textfield = new UI.Text({
-//     position: new Vector2(0, 65),
-//     size: new Vector2(144, 30),
-//     font: 'gothic-24-bold',
-//     text: 'Text Anywhere!',
-//     textAlign: 'center'
-//   });
-//   wind.add(textfield);
-//   wind.show();
-// });
-
-// main.on('click', 'down', function(e) {
-//   var card = new UI.Card();
-//   card.title('A Card');
-//   card.subtitle('Is a Window');
-//   card.body('The simplest window type in Pebble.js.');
-//   card.show();
-// });
