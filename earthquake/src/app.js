@@ -34,6 +34,7 @@ ajax(
   },
   function(data) {
     // Success!
+    
     var menuItems = parseFeed(data);
     // Construct Menu to show to user
     var resultsMenu = new UI.Menu({
@@ -42,6 +43,19 @@ ajax(
         items: menuItems
       }]
     });
+    
+    //menu select
+    resultsMenu.on('select', function(e) {
+      var data = todayData[e.itemIndex];
+      var description = '場所:'+data.place+'\nM'+data.magnitude+'\n震度:'+convert(data.scale)+'\n深さ:'+data.depth+'\n津波:'+data.tsunami;
+  
+       // Create the Card for detailed view
+      var detailCard = new UI.Card({
+        title:data.time,
+        body: description
+      });
+      detailCard.show();
+    });
 
     // Show the Menu, hide the splash
     resultsMenu.show();
@@ -49,33 +63,36 @@ ajax(
   },
   function(error) {
     // Failure!
-    console.log('Failed fetching weather data: ' + error);
+    console.log('Failed fetching data: ' + error);
     main.body('Failed fetching data: ' + error);
 });
 
 
 var parseFeed = function(data) {
   var items = [];
+  console.log(JSON.stringify(data));
   for(var i = 0; i < data.length; i++) {
-    var time = data[i].earthquake.time;
-    var magnitude = data[i].earthquake.hypocenter.magnitude;
-    var scale = data[i].earthquake.maxScale;
-    var place = data[i].earthquake.hypocenter.name;
-    var depth = data[i].earthquake.hypocenter.depth;
-    var wave = data[i].earthquake.domesticTsunami;
-    items.push({
-      title:time,
-      subtitle:'震度'+convert(scale)+':'+place
-    });
+    if (data[i].code == '551') {
+      var time = data[i].earthquake.time;
+      var magnitude = data[i].earthquake.hypocenter.magnitude;
+      var scale = data[i].earthquake.maxScale;
+      var place = data[i].earthquake.hypocenter.name;
+      var depth = data[i].earthquake.hypocenter.depth;
+      var wave = data[i].earthquake.domesticTsunami;
+      items.push({
+        title:time,
+        subtitle:'震度'+convert(scale)+':'+place
+      });
     
-    todayData.push({
-      'time':time,
-      'magnitude':magnitude,
-      'scale':scale,
-      'place':place,
-      'depth':depth,
-      'tsunami':tsunami(wave)
-    });
+      todayData.push({
+        'time':time,
+        'magnitude':magnitude,
+        'scale':scale,
+        'place':place,
+        'depth':depth,
+        'tsunami':tsunami(wave)
+      });
+   }
   }
   
   // Finally return whole array
@@ -124,26 +141,4 @@ function tsunami(wave){
   }
   return '';
 }
-
-main.on('click', 'select', function(e) {
-  var wind = new UI.Window({
-    fullscreen: true,
-  });
-  
-  var data = todayData[select];
-  var description = '発生時刻:'+data.time+'\n場所:'+data.place+'\nM'+data.magnitude+'\n震度:'+data.scale+'\n深さ:'+data.depth+'\n津波:'+data.tsunami;
-  
-  var text = new UI.Text({
-  position: new Vector2(0, 0),
-  size: new Vector2(144, 168),
-  text:description,
-  font:'GOTHIC_14',
-  color:'black',
-  textOverflow:'wrap',
-  textAlign:'left',
-	backgroundColor:'white'
-});
-  wind.add(text);
-  wind.show();
-});
 
